@@ -1,0 +1,209 @@
+/* Vernacular Learning Platform — one stylesheet, loaded by core/ui.py.
+   Contrast checked against WCAG AA (>= 4.5:1 on the surfaces used here). */
+
+:root {
+  --ve-ink: #111827;
+  --ve-body: #374151;
+  --ve-muted: #4b5563;
+  --ve-accent: #4338ca;
+  --ve-accent-soft: #eef2ff;
+  --ve-line: #e5e7eb;
+  --ve-bg: #ffffff;
+  --ve-radius: 16px;
+  --ve-font: "Inter", "Noto Sans", "Noto Sans Devanagari", "Noto Sans Bengali",
+    "Noto Sans Tamil", "Noto Sans Telugu", system-ui, -apple-system, "Segoe UI",
+    Roboto, sans-serif;
+}
+
+html,
+body,
+.stApp,
+[data-testid="stAppViewContainer"] {
+  background: var(--ve-bg);
+  font-family: var(--ve-font);
+  color: var(--ve-body);
+}
+
+.block-container {
+  padding-top: 2.2rem;
+  padding-bottom: 3rem;
+  max-width: 1080px;
+}
+
+/* ---------- brand + sidebar ---------- */
+
+.ve-brand {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ve-accent);
+  margin: 0 0 0.6rem;
+}
+
+[data-testid="stSidebar"] {
+  background: #fbfbfd;
+  border-right: 1px solid var(--ve-line);
+}
+
+[data-testid="stSidebarNav"] a {
+  border-radius: 10px;
+}
+
+/* ---------- hero ---------- */
+
+.ve-hero {
+  padding: 30px 28px;
+  border-radius: 20px;
+  border: 1px solid #e0e7ff;
+  background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 62%, #ffffff 100%);
+}
+
+.ve-eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ve-accent);
+  margin-bottom: 0.35rem;
+}
+
+.ve-hero h1 {
+  font-size: clamp(1.55rem, 3.2vw, 2.35rem);
+  line-height: 1.3;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--ve-ink);
+  margin: 0.1rem 0 0.55rem;
+}
+
+.ve-hero p {
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: var(--ve-body);
+  margin: 0;
+  max-width: 60ch;
+}
+
+/* ---------- cards ---------- */
+
+.ve-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+  margin: 6px 0 2px;
+}
+
+.ve-card {
+  background: #ffffff;
+  border: 1px solid var(--ve-line);
+  border-radius: var(--ve-radius);
+  padding: 16px 16px 18px;
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.04);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.ve-card:hover {
+  border-color: #c7d2fe;
+  transform: translateY(-1px);
+}
+
+.ve-card h3 {
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--ve-ink);
+  margin: 0.55rem 0 0;
+}
+
+.ve-chip {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ve-accent);
+  background: var(--ve-accent-soft);
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+
+/* ---------- badges, notes, labels ---------- */
+
+.ve-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  margin: 0.15rem 0 0.5rem;
+}
+
+.ve-badge--mock {
+  color: #92400e;
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.ve-badge--live {
+  color: #065f46;
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+}
+
+.ve-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.75;
+}
+
+.ve-note {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--ve-muted);
+  margin: 0.35rem 0 0;
+}
+
+.ve-section {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ve-muted);
+  margin: 0 0 0.4rem;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 640px) {
+  .block-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 1.2rem;
+  }
+
+  .ve-hero {
+    padding: 20px 18px;
+    border-radius: 16px;
+  }
+
+  .ve-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- accessibility ---------- */
+
+a:focus-visible,
+button:focus-visible,
+[data-testid="stSelectbox"] :focus-visible {
+  outline: 2px solid var(--ve-accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
