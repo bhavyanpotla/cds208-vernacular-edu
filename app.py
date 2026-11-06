@@ -12,7 +12,7 @@ import streamlit as st
 
 from core import config, db, events
 from core.i18n import t
-from core.ui import inject_css, provider_badge
+from core.ui import aurora, inject_css, provider_badge
 
 st.set_page_config(
     page_title=config.APP_NAME,
@@ -51,6 +51,7 @@ def sidebar_controls() -> str:
 def main() -> None:
     bootstrap()
     inject_css()
+    aurora()
     lang = sidebar_controls()
 
     if st.session_state.get("_ve_last_lang") != lang:

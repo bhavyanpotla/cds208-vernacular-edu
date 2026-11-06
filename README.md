@@ -10,8 +10,13 @@ provider so the whole app runs with no API key and no internet.
 
 ## Status
 
-Phase 0 complete: styled shell, language registry, database schema, append-only
-event log, and a Home page that actually changes language when you switch it.
+Phase 0 complete: dark glass shell with motion, language registry, database schema,
+append-only event log, and a Home page that actually changes language when you switch it.
+
+The UI is dark by default (`base = "dark"` in `.streamlit/config.toml`): a drifting
+aurora background, frosted glass panels, gradient display type, and cards that tilt
+in 3D toward the pointer. Every effect is CSS-first, so the page is fully readable
+with JavaScript disabled and static under `prefers-reduced-motion`.
 
 | Phase | What it adds | Status |
 |---|---|---|
@@ -61,7 +66,8 @@ core/db.py             SQLite schema + connection (Postgres swap lives here)
 core/events.py         log_event() — append-only analytics source of truth
 core/i18n.py           UI strings for English, Hindi, Bengali, Tamil, Telugu
 core/ui.py             HTML/CSS helpers: hero, cards, provider badge
-assets/styles.css      one stylesheet, WCAG AA contrast, 360px responsive
+assets/styles.css      one stylesheet: dark glass theme, 3D tilt, AA contrast, 360px responsive
+assets/app.js          optional pointer-tilt + parallax enhancer (zero-height iframe)
 tests/                 config, i18n, event-log and schema tests
 ```
 
