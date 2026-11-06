@@ -383,6 +383,31 @@ body,
   padding: 4px 10px;
 }
 
+.ve-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.ve-chip--ok {
+  color: #9df5cf;
+  background: rgba(16, 185, 129, 0.14);
+  border-color: rgba(16, 185, 129, 0.38);
+}
+
+.ve-chip--warn {
+  color: #ffd9a0;
+  background: rgba(245, 158, 11, 0.14);
+  border-color: rgba(245, 158, 11, 0.38);
+}
+
+.ve-chip--muted {
+  color: var(--ve-muted);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--ve-line);
+}
+
 /* ---------------------------------------------------------- glass panels */
 
 .ve-panel {

@@ -72,6 +72,24 @@ def db_path() -> Path:
     return Path(override) if override else DATA_DIR / "app.db"
 
 
+def translate_model() -> str:
+    """Sarvam translation model. mayura:v1 handles 1000 chars per request."""
+    return _env("TRANSLATE_MODEL", "mayura:v1")
+
+
+def translate_mode() -> str:
+    """formal | modern-colloquial | classic-colloquial | code-mixed."""
+    return _env("TRANSLATE_MODE", "modern-colloquial")
+
+
+def request_timeout() -> int:
+    return int(_env("VE_REQUEST_TIMEOUT", "20"))
+
+
+def request_retries() -> int:
+    return int(_env("VE_REQUEST_RETRIES", "1"))
+
+
 def flag(name: str, default: bool = False) -> bool:
     """Boolean feature flag, e.g. ``flag("VE_ENABLE_SPEECH")``."""
     raw = _env(name)

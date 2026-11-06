@@ -30,6 +30,8 @@ EVENT_NAMES: frozenset[str] = frozenset(
         "page_viewed",
         "ui_language_changed",
         "translation_requested",
+        "translation_served",
+        "translation_failed",
         "translation_copied",
         "term_glossed",
         "word_saved",

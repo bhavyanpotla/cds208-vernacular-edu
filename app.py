@@ -67,6 +67,12 @@ def main() -> None:
             default=True,
             url_path="home",
         ),
+        st.Page(
+            "pages/2_Translate.py",
+            title=t("nav_translate", lang),
+            icon=":material/translate:",
+            url_path="translate",
+        ),
     ]
     st.navigation(pages, position="sidebar").run()
 

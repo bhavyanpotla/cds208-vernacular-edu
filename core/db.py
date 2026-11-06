@@ -7,6 +7,7 @@ only this module changes. Nothing outside ``core`` opens a connection.
 from __future__ import annotations
 
 import sqlite3
+import time
 from collections.abc import Iterator
 from contextlib import contextmanager
 
@@ -113,6 +114,66 @@ def ensure_local_user(ui_language: str = config.DEFAULT_LANG) -> int:
 def set_ui_language(user_id: int, lang: str) -> None:
     with get_conn() as conn:
         conn.execute("UPDATE users SET ui_language = ? WHERE id = ?", (lang, user_id))
+
+
+def now_ms() -> int:
+    """Monotonic-ish wall clock in milliseconds, used for latency numbers."""
+    return int(time.time() * 1000)
+
+
+def get_cached_translation(source_text: str, source_lang: str, target_lang: str) -> dict | None:
+    """Newest matching row for this exact pair, or None. The DB-level cache."""
+    with get_conn() as conn:
+        row = conn.execute(
+            "SELECT output_text, provider, latency_ms FROM translations"
+            " WHERE source_text = ? AND source_lang = ? AND target_lang = ?"
+            " ORDER BY id DESC LIMIT 1",
+            (source_text, source_lang, target_lang),
+        ).fetchone()
+    return dict(row) if row else None
+
+
+def save_translation(
+    source_text: str,
+    source_lang: str,
+    target_lang: str,
+    output_text: str,
+    provider: str,
+    latency_ms: int,
+    user_id: int | None = None,
+) -> None:
+    with get_conn() as conn:
+        conn.execute(
+            "INSERT INTO translations"
+            " (user_id, source_text, source_lang, target_lang, output_text, provider, latency_ms)"
+            " VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (user_id, source_text, source_lang, target_lang, output_text, provider, latency_ms),
+        )
+
+
+def recent_translations(limit: int = 8) -> list[dict]:
+    with get_conn() as conn:
+        rows = conn.execute(
+            "SELECT source_text, source_lang, target_lang, output_text, provider,"
+            " latency_ms, created_at FROM translations ORDER BY id DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
+    return [dict(row) for row in rows]
+
+
+def translation_stats() -> dict:
+    """Counts the Translate page shows under the result: real, cache, mock."""
+    with get_conn() as conn:
+        total = conn.execute("SELECT COUNT(*) AS n FROM translations").fetchone()["n"]
+        avg = conn.execute("SELECT AVG(latency_ms) AS v FROM translations").fetchone()["v"]
+        by_provider = conn.execute(
+            "SELECT provider, COUNT(*) AS n FROM translations GROUP BY provider"
+        ).fetchall()
+    return {
+        "total": int(total),
+        "avg_latency_ms": int(avg) if avg else 0,
+        "by_provider": {row["provider"]: int(row["n"]) for row in by_provider},
+    }
 
 
 def reset_db() -> None:

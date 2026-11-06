@@ -10,7 +10,7 @@ provider so the whole app runs with no API key and no internet.
 
 ## Status
 
-Phase 0 complete: dark glass shell with motion, language registry, database schema,
+Phases 0–1 complete: dark glass shell with motion, language registry, database schema,
 append-only event log, and a Home page that actually changes language when you switch it.
 
 The UI is dark by default (`base = "dark"` in `.streamlit/config.toml`): a drifting
@@ -21,8 +21,8 @@ with JavaScript disabled and static under `prefers-reduced-motion`.
 | Phase | What it adds | Status |
 |---|---|---|
 | 0 | Shell, config, DB, event log | done |
-| 1 | Translation service + Translate page | next |
-| 2 | Lessons, reader, tap-to-translate, quiz | planned |
+| 1 | Translation service + Translate page | done |
+| 2 | Lessons, reader, tap-to-translate, quiz | next |
 | 3 | Tutor agent, personalisation | planned |
 | 4 | Export pipeline + Power BI report | planned |
 | 5 | Polish, accessibility, deployment | planned |
@@ -61,9 +61,12 @@ CI runs both on every push (`.github/workflows/ci.yml`).
 ```
 app.py                 entry: page config, CSS, session bootstrap, navigation
 pages/1_Home.py        Home surface
+pages/2_Translate.py   two-panel translation workspace with latency + provider badge
 core/config.py         the only module that reads the environment
 core/db.py             SQLite schema + connection (Postgres swap lives here)
 core/events.py         log_event() — append-only analytics source of truth
+core/llm.py            provider adapter: sarvam | mock, retries, 1000-char chunking
+core/translate.py      translation service: memory cache → SQLite → provider → event
 core/i18n.py           UI strings for English, Hindi, Bengali, Tamil, Telugu
 core/ui.py             HTML/CSS helpers: hero, cards, provider badge
 assets/styles.css      one stylesheet: dark glass theme, 3D tilt, AA contrast, 360px responsive

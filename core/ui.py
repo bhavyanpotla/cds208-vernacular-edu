@@ -81,6 +81,15 @@ def badge_html() -> str:
     )
 
 
+def chips_html(items: list[tuple[str, str]]) -> str:
+    """``items`` is ``(label, kind)`` where kind is "", "accent", "ok" or "warn"."""
+    spans = "".join(
+        f'<span class="ve-chip{" ve-chip--" + kind if kind else ""}">{escape(label)}</span>'
+        for label, kind in items
+    )
+    return f'<div class="ve-chips">{spans}</div>'
+
+
 def panel_html(text: str) -> str:
     return f'<div class="ve-panel"><p>{escape(text)}</p></div>'
 
@@ -118,6 +127,10 @@ def tilt_cards(items: list[tuple[str, str, str]]) -> None:
 
 def provider_badge() -> None:
     _render(badge_html())
+
+
+def chips(items: list[tuple[str, str]]) -> None:
+    _render(chips_html(items))
 
 
 def panel(text: str) -> None:

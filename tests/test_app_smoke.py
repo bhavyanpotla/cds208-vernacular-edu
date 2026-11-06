@@ -29,3 +29,16 @@ def test_switching_language_changes_the_page(tmp_path, monkeypatch):
     assert not at.exception, [e.value for e in at.exception]
     rendered = " ".join(block.value for block in at.markdown)
     assert "నేర్చుకోండి" in rendered  # Telugu tagline is actually on screen
+
+
+def test_translate_page_produces_a_mock_translation(tmp_path, monkeypatch):
+    at = _boot(tmp_path, monkeypatch)
+    at.switch_page("pages/2_Translate.py").run()
+    assert not at.exception, [e.value for e in at.exception]
+    assert [b.label for b in at.button] == ["Try an example", "Translate"]
+
+    at.text_area[0].set_value("plant water food").run()
+    at.button[1].click().run()
+
+    assert not at.exception, [e.value for e in at.exception]
+    assert at.code[0].value == "पौधा पानी भोजन", "mock dictionary path is wired end to end"
