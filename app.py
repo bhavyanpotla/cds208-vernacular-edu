@@ -68,6 +68,12 @@ def main() -> None:
             url_path="home",
         ),
         st.Page(
+            "pages/3_Learn.py",
+            title=t("nav_learn", lang),
+            icon=":material/menu_book:",
+            url_path="learn",
+        ),
+        st.Page(
             "pages/2_Translate.py",
             title=t("nav_translate", lang),
             icon=":material/translate:",

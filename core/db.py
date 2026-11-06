@@ -176,6 +176,56 @@ def translation_stats() -> dict:
     }
 
 
+def upsert_progress(
+    user_id: int,
+    lesson_id: str,
+    segment_id: str | None,
+    status: str,
+    score: float | None = None,
+) -> None:
+    """Insert or update one progress row.
+
+    Lesson-level rows store ``segment_id = ""`` rather than NULL, because SQLite
+    treats NULLs as distinct and the UNIQUE constraint would never fire.
+    """
+    with get_conn() as conn:
+        conn.execute(
+            "INSERT INTO progress (user_id, lesson_id, segment_id, status, score)"
+            " VALUES (?, ?, ?, ?, ?)"
+            " ON CONFLICT(user_id, lesson_id, segment_id) DO UPDATE SET"
+            " status = excluded.status, score = excluded.score,"
+            " updated_at = datetime('now')",
+            (user_id, lesson_id, segment_id or "", status, score),
+        )
+
+
+def lesson_progress(user_id: int, lesson_id: str) -> dict | None:
+    with get_conn() as conn:
+        row = conn.execute(
+            "SELECT status, score, updated_at FROM progress"
+            " WHERE user_id = ? AND lesson_id = ? AND segment_id = ''"
+            " ORDER BY id DESC LIMIT 1",
+            (user_id, lesson_id),
+        ).fetchone()
+    return dict(row) if row else None
+
+
+def progress_summary(user_id: int) -> dict:
+    with get_conn() as conn:
+        row = conn.execute(
+            "SELECT COUNT(*) AS n,"
+            " SUM(CASE WHEN status = 'quiz_passed' THEN 1 ELSE 0 END) AS passed,"
+            " AVG(score) AS avg_score"
+            " FROM progress WHERE user_id = ?",
+            (user_id,),
+        ).fetchone()
+    return {
+        "lessons_touched": int(row["n"] or 0),
+        "quiz_passed": int(row["passed"] or 0),
+        "avg_score": round(float(row["avg_score"] or 0) * 100),
+    }
+
+
 def reset_db() -> None:
     """Delete the database file. Dev and tests only — never called by pages."""
     path = config.db_path()

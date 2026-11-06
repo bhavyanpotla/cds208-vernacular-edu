@@ -42,3 +42,34 @@ def test_translate_page_produces_a_mock_translation(tmp_path, monkeypatch):
 
     assert not at.exception, [e.value for e in at.exception]
     assert at.code[0].value == "पौधा पानी भोजन", "mock dictionary path is wired end to end"
+
+
+def test_learn_page_scores_the_quiz_and_records_it(tmp_path, monkeypatch):
+    at = _boot(tmp_path, monkeypatch)
+    at.switch_page("pages/3_Learn.py").run()
+    assert not at.exception, [e.value for e in at.exception]
+    assert len(at.radio) == 3
+
+    for radio in at.radio:
+        radio.set_value(0)
+    at.run()
+
+    labels = [button.label for button in at.button]
+    at.button[labels.index("Check answers")].click().run()
+
+    assert not at.exception, [e.value for e in at.exception]
+    assert at.metric[0].value == "3/3"
+    assert at.metric[1].value == "100%"
+
+
+def test_learn_page_glosses_a_term_in_the_reading_language(tmp_path, monkeypatch):
+    at = _boot(tmp_path, monkeypatch)
+    at.sidebar.selectbox[0].select("te-IN").run()
+    at.switch_page("pages/3_Learn.py").run()
+
+    at.button[0].click().run()
+    assert not at.exception, [e.value for e in at.exception]
+
+    entry = at.session_state["gloss"]
+    assert entry["term"] == "fraction"
+    assert entry["authored"] == "translated", "Telugu gloss is filled by the service"

@@ -10,7 +10,7 @@ provider so the whole app runs with no API key and no internet.
 
 ## Status
 
-Phases 0–1 complete: dark glass shell with motion, language registry, database schema,
+Phases 0–2 complete: dark glass shell with motion, language registry, database schema,
 append-only event log, and a Home page that actually changes language when you switch it.
 
 The UI is dark by default (`base = "dark"` in `.streamlit/config.toml`): a drifting
@@ -22,8 +22,8 @@ with JavaScript disabled and static under `prefers-reduced-motion`.
 |---|---|---|
 | 0 | Shell, config, DB, event log | done |
 | 1 | Translation service + Translate page | done |
-| 2 | Lessons, reader, tap-to-translate, quiz | next |
-| 3 | Tutor agent, personalisation | planned |
+| 2 | Lessons, reader, tap-to-translate, quiz | done |
+| 3 | Tutor agent, personalisation | next |
 | 4 | Export pipeline + Power BI report | planned |
 | 5 | Polish, accessibility, deployment | planned |
 
@@ -62,11 +62,16 @@ CI runs both on every push (`.github/workflows/ci.yml`).
 app.py                 entry: page config, CSS, session bootstrap, navigation
 pages/1_Home.py        Home surface
 pages/2_Translate.py   two-panel translation workspace with latency + provider badge
+pages/3_Learn.py       reader, tap-to-translate glosses, static quiz
+content/lessons/*.json four lessons, English + Hindi authored inline
+content/glossary.json  term → per-language explanation
 core/config.py         the only module that reads the environment
 core/db.py             SQLite schema + connection (Postgres swap lives here)
 core/events.py         log_event() — append-only analytics source of truth
 core/llm.py            provider adapter: sarvam | mock, retries, 1000-char chunking
 core/translate.py      translation service: memory cache → SQLite → provider → event
+core/lessons.py        load/localise lessons + glossary, filling missing languages
+core/quiz.py           pure scoring + progress/event recording
 core/i18n.py           UI strings for English, Hindi, Bengali, Tamil, Telugu
 core/ui.py             HTML/CSS helpers: hero, cards, provider badge
 assets/styles.css      one stylesheet: dark glass theme, 3D tilt, AA contrast, 360px responsive
@@ -87,6 +92,9 @@ badly. Adding a sixth is one entry in `core/config.py` plus its strings in
 
 - Speech (STT/TTS) is on the roadmap, not in the build — the text path is the product.
 - Four lessons, not a curriculum; this is a demonstration of the loop, not a content library.
+- Only English and Hindi are hand-authored; Tamil, Telugu and Bengali are filled by
+  the translation service on first read and cached. That is deliberate, and the UI
+  labels a gloss as authored or translated.
 - The tutor refuses to answer outside the lesson it is grounded in. That is deliberate.
 - Single local learner profile until auth lands in Phase 5.
 
