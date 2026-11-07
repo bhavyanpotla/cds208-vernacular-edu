@@ -66,6 +66,12 @@ def is_mock_mode() -> bool:
     return provider_mode() == "mock"
 
 
+def export_dir() -> Path:
+    """Where the Power BI CSVs land. ``VE_EXPORT_DIR`` overrides it (tests)."""
+    override = _env("VE_EXPORT_DIR")
+    return Path(override) if override else EXPORT_DIR
+
+
 def db_path() -> Path:
     """SQLite file location. ``VE_DB_PATH`` overrides it (used by tests)."""
     override = _env("VE_DB_PATH")

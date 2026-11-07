@@ -86,6 +86,12 @@ def main() -> None:
             url_path="progress",
         ),
         st.Page(
+            "pages/6_Analytics.py",
+            title=t("card_analytics", lang),
+            icon=":material/insights:",
+            url_path="analytics",
+        ),
+        st.Page(
             "pages/2_Translate.py",
             title=t("nav_translate", lang),
             icon=":material/translate:",

@@ -10,7 +10,7 @@ provider so the whole app runs with no API key and no internet.
 
 ## Status
 
-Phases 0–3 complete: dark glass shell with motion, language registry, database schema,
+Phases 0–4 complete: dark glass shell with motion, language registry, database schema,
 append-only event log, and a Home page that actually changes language when you switch it.
 
 The UI is dark by default (`base = "dark"` in `.streamlit/config.toml`): a drifting
@@ -24,8 +24,8 @@ with JavaScript disabled and static under `prefers-reduced-motion`.
 | 1 | Translation service + Translate page | done |
 | 2 | Lessons, reader, tap-to-translate, quiz | done |
 | 3 | Tutor agent, personalisation | done |
-| 4 | Export pipeline + Power BI report | next |
-| 5 | Polish, accessibility, deployment | planned |
+| 4 | Export pipeline + Power BI report | done |
+| 5 | Polish, accessibility, deployment | next |
 
 ## Run it
 
@@ -46,6 +46,18 @@ To use the real provider:
 cp .env.example .env    # then put your key in SARVAM_API_KEY
 ```
 
+## Analytics
+
+Every user action appends a row to `events`. The Analytics page reads that table
+directly, and **Refresh export** writes the same data into `exports/` as four
+CSVs plus `_health.json`. Power BI Desktop reads that folder, so one refresh
+updates the report. The full build sequence — relationships, DAX measures, the
+three report pages — is in `docs/powerbi.md`.
+
+`_health.json` is the guard: row counts, null rates, cache hit rate, and the list
+of documented events that have never fired. If a feature is missing from the
+dashboard, the coverage audit names it.
+
 ## Tests
 
 ```bash
@@ -65,6 +77,8 @@ pages/2_Translate.py   two-panel translation workspace with latency + provider b
 pages/3_Learn.py       reader, tap-to-translate glosses, static quiz
 pages/4_Tutor.py       grounded chat tutor with context picker
 pages/5_Progress.py    recommendation, per-lesson table, event breakdown
+pages/6_Analytics.py   live metrics, DAU, language mix, struggle list, export button
+docs/powerbi.md        step-by-step .pbix build: model, DAX measures, three pages
 content/lessons/*.json four lessons, English + Hindi authored inline
 content/glossary.json  term → per-language explanation
 core/config.py         the only module that reads the environment
@@ -78,6 +92,7 @@ agents/prompts.py      every system prompt, one place
 agents/tutor.py        grounded answers + honest refusal, offline and live
 agents/coach.py        rule-first recommender, model only phrases the reason
 agents/phrases.py      offline phrasing in all five languages
+core/export.py         four CSVs + _health.json for Power BI, plus live chart queries
 core/i18n.py           UI strings for English, Hindi, Bengali, Tamil, Telugu
 core/ui.py             HTML/CSS helpers: hero, cards, provider badge
 assets/styles.css      one stylesheet: dark glass theme, 3D tilt, AA contrast, 360px responsive

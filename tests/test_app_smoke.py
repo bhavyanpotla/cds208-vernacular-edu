@@ -101,3 +101,23 @@ def test_progress_recommends_a_real_lesson(tmp_path, monkeypatch):
     body = " ".join(block.value for block in at.markdown)
     assert "You have not opened" in body, "rule-based reason is rendered"
     assert at.metric[3].label == "Events logged"
+
+
+def test_analytics_page_exports_the_csvs(tmp_path, monkeypatch):
+    monkeypatch.setenv("VE_EXPORT_DIR", str(tmp_path / "exports"))
+    at = _boot(tmp_path, monkeypatch)
+    at.switch_page("pages/6_Analytics.py").run()
+    assert not at.exception, [e.value for e in at.exception]
+
+    labels = [button.label for button in at.button]
+    at.button[labels.index("Refresh export")].click().run()
+
+    assert not at.exception, [e.value for e in at.exception]
+    written = sorted(p.name for p in (tmp_path / "exports").iterdir())
+    assert written == [
+        "_health.json",
+        "dim_lessons.csv",
+        "dim_users.csv",
+        "fact_events.csv",
+        "fact_translations.csv",
+    ]
