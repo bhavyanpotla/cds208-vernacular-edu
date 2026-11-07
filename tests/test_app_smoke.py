@@ -73,3 +73,31 @@ def test_learn_page_glosses_a_term_in_the_reading_language(tmp_path, monkeypatch
     entry = at.session_state["gloss"]
     assert entry["term"] == "fraction"
     assert entry["authored"] == "translated", "Telugu gloss is filled by the service"
+
+
+def test_tutor_answers_then_refuses(tmp_path, monkeypatch):
+    at = _boot(tmp_path, monkeypatch)
+    at.switch_page("pages/4_Tutor.py").run()
+    assert not at.exception, [e.value for e in at.exception]
+
+    # the tutor is grounded in the selected lesson, so pick the photosynthesis one
+    at.selectbox[0].set_value("science-photosynthesis-01").run()
+    at.chat_input[0].set_value("What do plants need to make food?").run()
+    assert not at.exception, [e.value for e in at.exception]
+    grounded = " ".join(block.value for block in at.markdown)
+    assert "From the lesson" in grounded or "पाठ से" in grounded
+
+    at.chat_input[0].set_value("Who won the cricket world cup?").run()
+    assert not at.exception, [e.value for e in at.exception]
+    refused = " ".join(block.value for block in at.markdown)
+    assert "not covered" in refused or "नहीं है" in refused
+
+
+def test_progress_recommends_a_real_lesson(tmp_path, monkeypatch):
+    at = _boot(tmp_path, monkeypatch)
+    at.switch_page("pages/5_Progress.py").run()
+    assert not at.exception, [e.value for e in at.exception]
+
+    body = " ".join(block.value for block in at.markdown)
+    assert "You have not opened" in body, "rule-based reason is rendered"
+    assert at.metric[3].label == "Events logged"

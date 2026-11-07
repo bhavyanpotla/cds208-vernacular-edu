@@ -108,6 +108,20 @@ UI_STRINGS: dict[str, dict[str, str]] = {
         "ta-IN": "மொழிபெயர்ப்பு",
         "te-IN": "అనువాదం",
     },
+    "nav_tutor": {
+        "en-IN": "Tutor",
+        "hi-IN": "शिक्षक",
+        "bn-IN": "শিক্ষক",
+        "ta-IN": "ஆசிரியர்",
+        "te-IN": "ట్యూటర్",
+    },
+    "nav_progress": {
+        "en-IN": "Progress",
+        "hi-IN": "प्रगति",
+        "bn-IN": "অগ্রগতি",
+        "ta-IN": "முன்னேற்றம்",
+        "te-IN": "ప్రోగ్రెస్",
+    },
     "nav_learn": {
         "en-IN": "Learn",
         "hi-IN": "सीखें",

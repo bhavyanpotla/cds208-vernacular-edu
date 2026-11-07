@@ -29,6 +29,16 @@ _SENTENCE_SPLIT = re.compile(r"(?<=[.!?।॥])\s+")
 
 
 @dataclass(frozen=True)
+class ChatReply:
+    """A chat completion. ``text`` is empty when the provider failed."""
+
+    text: str
+    provider: str  # sarvam | mock
+    degraded: bool = False
+    error: str | None = None
+
+
+@dataclass(frozen=True)
 class Translation:
     """One translation result, with enough metadata for the UI to be honest."""
 
@@ -144,6 +154,41 @@ def translate(text: str, source: str = "en-IN", target: str = "hi-IN") -> Transl
 
 def _elapsed_ms(started: float) -> int:
     return max(1, int((time.perf_counter() - started) * 1000))
+
+
+# ------------------------------------------------------------------------ chat
+
+
+def chat(
+    messages: list[dict[str, str]],
+    temperature: float = 0.3,
+    max_tokens: int = 700,
+) -> ChatReply:
+    """OpenAI-compatible chat completion. Never raises.
+
+    On failure it returns ``text=""`` with ``degraded=True``; the caller
+    (``agents/tutor.py``) then answers from its own offline logic rather than
+    showing the student an error.
+    """
+    if config.is_mock_mode():
+        return ChatReply(text="", provider="mock", degraded=True, error="no api key")
+
+    try:
+        data = _post(
+            "/v1/chat/completions",
+            {
+                "model": config.chat_model(),
+                "messages": messages,
+                "temperature": temperature,
+                "max_tokens": max_tokens,
+            },
+        )
+        content = (data["choices"][0]["message"]["content"] or "").strip()
+        if not content:
+            raise RuntimeError("empty completion")
+        return ChatReply(text=content, provider="sarvam")
+    except Exception as exc:  # noqa: BLE001 - degrade, never break the lesson
+        return ChatReply(text="", provider="mock", degraded=True, error=str(exc)[:240])
 
 
 # ----------------------------------------------------------------------- mock

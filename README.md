@@ -10,7 +10,7 @@ provider so the whole app runs with no API key and no internet.
 
 ## Status
 
-Phases 0–2 complete: dark glass shell with motion, language registry, database schema,
+Phases 0–3 complete: dark glass shell with motion, language registry, database schema,
 append-only event log, and a Home page that actually changes language when you switch it.
 
 The UI is dark by default (`base = "dark"` in `.streamlit/config.toml`): a drifting
@@ -23,8 +23,8 @@ with JavaScript disabled and static under `prefers-reduced-motion`.
 | 0 | Shell, config, DB, event log | done |
 | 1 | Translation service + Translate page | done |
 | 2 | Lessons, reader, tap-to-translate, quiz | done |
-| 3 | Tutor agent, personalisation | next |
-| 4 | Export pipeline + Power BI report | planned |
+| 3 | Tutor agent, personalisation | done |
+| 4 | Export pipeline + Power BI report | next |
 | 5 | Polish, accessibility, deployment | planned |
 
 ## Run it
@@ -63,6 +63,8 @@ app.py                 entry: page config, CSS, session bootstrap, navigation
 pages/1_Home.py        Home surface
 pages/2_Translate.py   two-panel translation workspace with latency + provider badge
 pages/3_Learn.py       reader, tap-to-translate glosses, static quiz
+pages/4_Tutor.py       grounded chat tutor with context picker
+pages/5_Progress.py    recommendation, per-lesson table, event breakdown
 content/lessons/*.json four lessons, English + Hindi authored inline
 content/glossary.json  term → per-language explanation
 core/config.py         the only module that reads the environment
@@ -72,6 +74,10 @@ core/llm.py            provider adapter: sarvam | mock, retries, 1000-char chunk
 core/translate.py      translation service: memory cache → SQLite → provider → event
 core/lessons.py        load/localise lessons + glossary, filling missing languages
 core/quiz.py           pure scoring + progress/event recording
+agents/prompts.py      every system prompt, one place
+agents/tutor.py        grounded answers + honest refusal, offline and live
+agents/coach.py        rule-first recommender, model only phrases the reason
+agents/phrases.py      offline phrasing in all five languages
 core/i18n.py           UI strings for English, Hindi, Bengali, Tamil, Telugu
 core/ui.py             HTML/CSS helpers: hero, cards, provider badge
 assets/styles.css      one stylesheet: dark glass theme, 3D tilt, AA contrast, 360px responsive
@@ -97,6 +103,10 @@ badly. Adding a sixth is one entry in `core/config.py` plus its strings in
   labels a gloss as authored or translated.
 - The tutor refuses to answer outside the lesson it is grounded in. That is deliberate.
 - Single local learner profile until auth lands in Phase 5.
+- Tutor grounding is a lexical check against the lesson, so a question phrased with
+  none of the lesson's vocabulary is treated as outside it. It errs toward refusing.
+- Progress-page chrome (metric labels, table headers) is still English; the
+  recommendation reason itself is localised. Full i18n sweep is Phase 5.
 
 ## License
 

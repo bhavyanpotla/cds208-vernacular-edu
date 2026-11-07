@@ -74,6 +74,18 @@ def main() -> None:
             url_path="learn",
         ),
         st.Page(
+            "pages/4_Tutor.py",
+            title=t("nav_tutor", lang),
+            icon=":material/forum:",
+            url_path="tutor",
+        ),
+        st.Page(
+            "pages/5_Progress.py",
+            title=t("nav_progress", lang),
+            icon=":material/trending_up:",
+            url_path="progress",
+        ),
+        st.Page(
             "pages/2_Translate.py",
             title=t("nav_translate", lang),
             icon=":material/translate:",

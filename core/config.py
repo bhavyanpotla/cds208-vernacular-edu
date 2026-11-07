@@ -82,6 +82,11 @@ def translate_mode() -> str:
     return _env("TRANSLATE_MODE", "modern-colloquial")
 
 
+def chat_model() -> str:
+    """Sarvam chat model, on the OpenAI-compatible /v1/chat/completions route."""
+    return _env("CHAT_MODEL", "sarvam-m")
+
+
 def request_timeout() -> int:
     return int(_env("VE_REQUEST_TIMEOUT", "20"))
 
