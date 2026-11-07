@@ -42,13 +42,13 @@ hero(
 st.write("")
 
 metrics = st.columns(4, gap="medium")
-metrics[0].metric("Lessons touched", summary["lessons_touched"])
-metrics[1].metric("Quizzes passed", summary["quiz_passed"])
-metrics[2].metric("Average score", f'{summary["avg_score"]}%')
-metrics[3].metric("Events logged", sum(event_counts.values()))
+metrics[0].metric(t("prog_lessons_touched", lang), summary["lessons_touched"])
+metrics[1].metric(t("prog_quizzes_passed", lang), summary["quiz_passed"])
+metrics[2].metric(t("prog_avg_score", lang), f'{summary["avg_score"]}%')
+metrics[3].metric(t("prog_events_logged", lang), sum(event_counts.values()))
 
 st.write("")
-section_label("Recommended next")
+section_label(t("prog_next", lang))
 
 recommendation = coach.recommend(user_id, lang)
 next_lesson = lessons.get(recommendation["next_lesson_id"])
@@ -69,20 +69,20 @@ if next_lesson:
         + ", ".join(recommendation["focus_terms"] or lessons.key_terms(next_lesson)[:3])
     )
 
-if st.button("Recompute recommendation"):
+if st.button(t("prog_recompute", lang)):
     st.session_state.pop("_progress_refresh", None)
     st.rerun()
 
 st.divider()
 
-section_label("Per lesson")
+section_label(t("prog_per_lesson", lang))
 
 rows = []
 for lesson in lessons.all_lessons():
     row = db.lesson_progress(user_id, lesson["id"]) if user_id else None
     rows.append(
         {
-            "lesson": lessons.title(lesson, lang, user_id),
+            t("learn_lessons", lang): lessons.title(lesson, lang, user_id),
             "subject": lesson["subject"],
             "grade": lesson["grade"],
             "status": (row or {}).get("status") or "not started",
@@ -93,7 +93,7 @@ for lesson in lessons.all_lessons():
     )
 st.dataframe(rows, width="stretch", hide_index=True)
 
-section_label("What the log says")
+section_label(t("prog_log", lang))
 if event_counts:
     st.dataframe(
         [{"event": name, "count": count} for name, count in event_counts.items()],

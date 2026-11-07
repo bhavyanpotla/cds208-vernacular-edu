@@ -45,6 +45,14 @@ def sidebar_controls() -> str:
             key="ui_language",
         )
         provider_badge()
+        scale = st.select_slider(
+            t("font_size", lang),
+            options=[14, 16, 18],
+            value=int(st.session_state.get("font_scale", 16)),
+            key="font_scale",
+            help="Scales the whole interface — an accessibility control, not a browser zoom.",
+        )
+        st.markdown(f"<style>html{{font-size:{scale}px;}}</style>", unsafe_allow_html=True)
     return lang
 
 

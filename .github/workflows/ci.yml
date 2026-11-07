@@ -29,6 +29,12 @@ jobs:
       - name: Test
         run: python -m pytest
 
+      - name: Seed demo data (proves the script runs clean)
+        env:
+          SARVAM_API_KEY: ""
+          VE_DB_PATH: data/ci.db
+        run: python scripts/seed_demo.py --reset
+
       - name: Import smoke test (no API key, mock mode)
         env:
           SARVAM_API_KEY: ""

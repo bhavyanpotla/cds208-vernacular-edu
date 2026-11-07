@@ -13,7 +13,7 @@ from agents import phrases
 from agents import tutor as tutor_agent
 from core import config, events, lessons
 from core.i18n import t
-from core.ui import chips, enhance_js, hero, note, section_label
+from core.ui import chips, enhance_js, hero, note
 
 lang = st.session_state.get("ui_language", config.DEFAULT_LANG)
 user_id = st.session_state.get("user_id")
@@ -64,7 +64,6 @@ if st.session_state.get("tutor_ctx") != (lesson_id, segment_id):
     st.session_state["tutor_msgs"] = []
     st.session_state["tutor_grounded"] = []
 
-section_label(phrases.p("context", lang))
 note(
     f"{lessons.title(lesson, lang, user_id)} — "
     f"{lessons.segment_text(lesson, segment, lang, user_id)}"

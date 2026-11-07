@@ -26,8 +26,8 @@ hero(
     ),
     pills=[
         f'{numbers["events"]} events',
-        f'{numbers["sessions"]} sessions',
-        f'{numbers["learners"]} learners',
+        f'{numbers["sessions"]} session' + ("s" if numbers["sessions"] != 1 else ""),
+        f'{numbers["learners"]} learner' + ("s" if numbers["learners"] != 1 else ""),
     ],
 )
 
@@ -35,14 +35,14 @@ st.write("")
 
 tiles = st.columns(4, gap="medium")
 tiles[0].metric("Events", numbers["events"])
-tiles[1].metric("Translations", numbers["translations"])
-tiles[2].metric("Cache hit rate", f'{round(numbers["cache_hit_rate"] * 100)}%')
-tiles[3].metric("Avg latency", f'{numbers["avg_latency_ms"]} ms')
+tiles[1].metric(t("ana_translations", lang), numbers["translations"])
+tiles[2].metric(t("ana_cache", lang), f'{round(numbers["cache_hit_rate"] * 100)}%')
+tiles[3].metric(t("ana_latency", lang), f'{numbers["avg_latency_ms"]} ms')
 
 tiles2 = st.columns(4, gap="medium")
-tiles2[0].metric("Tutor turns", numbers["tutor_turns"])
-tiles2[1].metric("Honest refusals", numbers["refusals"])
-tiles2[2].metric("Quizzes taken", numbers["quizzes"])
+tiles2[0].metric(t("ana_tutor_turns", lang), numbers["tutor_turns"])
+tiles2[1].metric(t("ana_refusals", lang), numbers["refusals"])
+tiles2[2].metric(t("ana_quizzes", lang), numbers["quizzes"])
 tiles2[3].metric("Sessions", numbers["sessions"])
 
 st.divider()
@@ -50,7 +50,7 @@ st.divider()
 left, right = st.columns(2, gap="large")
 
 with left:
-    section_label("Events per day")
+    section_label(t("ana_per_day", lang))
     daily = export.events_per_day()
     if daily.empty:
         note("No events yet — open a lesson or ask the tutor, then come back.")
@@ -58,7 +58,7 @@ with left:
         st.line_chart(daily.set_index("day")["events"], height=240)
 
 with right:
-    section_label("Events by language")
+    section_label(t("ana_by_lang", lang))
     by_lang = export.events_by_language()
     if by_lang.empty:
         note("No language data yet.")
@@ -70,7 +70,7 @@ st.divider()
 left, right = st.columns(2, gap="large")
 
 with left:
-    section_label("What fires most")
+    section_label(t("ana_top", lang))
     by_name = export.events_by_name()
     if by_name.empty:
         note("Nothing logged yet.")
@@ -78,7 +78,7 @@ with left:
         st.dataframe(by_name, width="stretch", hide_index=True, height=280)
 
 with right:
-    section_label("Struggle list — terms most tapped")
+    section_label(t("ana_struggle", lang) + " — " + "terms most tapped")
     terms = export.terms_most_translated()
     if terms.empty:
         note("No terms tapped yet. Open Learn and tap a glossary term.")
@@ -98,7 +98,7 @@ st.markdown(
     "that folder as a source, so a refresh picks up all four files."
 )
 
-if st.button("Refresh export", type="primary"):
+if st.button(t("ana_refresh", lang), type="primary"):
     health = export.run_export()
     st.session_state["export_health"] = health
     st.toast(f'Wrote {health["rows"]["fact_events"]} event rows in {health["duration_ms"]} ms')

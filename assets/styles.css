@@ -642,6 +642,21 @@ hr {
 
 /* ------------------------------------------------------- accessibility */
 
+/* 44px minimum touch targets on anything clickable */
+.stButton > button,
+.stDownloadButton > button,
+[data-testid="stExpander"] summary,
+[data-baseweb="select"] > div {
+  min-height: 44px;
+}
+
+/* the language picker and nav need to stay legible at 360px */
+@media (max-width: 480px) {
+  [data-testid="stSidebar"] {
+    min-width: 260px;
+  }
+}
+
 a:focus-visible,
 button:focus-visible,
 summary:focus-visible,
